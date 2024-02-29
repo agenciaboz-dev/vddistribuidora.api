@@ -142,6 +142,81 @@ export class Person {
     }
   }
 
+  //   static async update(socket: Socket, data: PersonForm) {
+  //     try {
+  //       const { id, type } = data;
+  //       const person = await prisma.person.findUnique({
+  //         where: { id },
+  //         include,
+  //       });
+  //       if (person) {
+  //         const updatedPerson = await prisma.person.update({
+  //           where: { id },
+  //           data: {
+  //             image: data.image,
+  //             state: data.state,
+  //             classification: data.classification,
+  //             creditLimit: data.creditLimit,
+  //             commission: data.commission,
+  //             antt: data.antt,
+  //             category: data.category,
+  //             accountingCategory: data.accountingCategory,
+  //             municipalInscription: data.municipalInscription,
+  //             range: data.range,
+  //             suframaInscription: data.suframaInscription,
+  //             route: data.route,
+  //             finalConsumer: data.finalConsumer,
+  //             client: data.client,
+  //             transportCompany: data.transportCompany,
+  //             supplier: data.supplier,
+  //             employee: data.employee,
+  //             salesman: data.salesman,
+  //             icmsExemption: data.icmsExemption,
+  //             icmsContributor: data.icmsContributor,
+  //             simpleFederalOptant: data.simpleFederalOptant,
+  //             nfeb2b: data.nfeb2b,
+  //             addresses: data.addresses
+  //               ? {
+  //                   connect: data.addresses.map((address) => ({
+  //                     id: address.id,
+  //                   })),
+  //                 }
+  //               : undefined,
+  //           },
+  //           include,
+  //         });
+  //         if (type === "physical") {
+  //           await prisma.physicalPerson.update({
+  //             where: { personId: id },
+  //             data: {
+  //               name: data.name,
+  //               nickname: data.nickname,
+  //               cpf: data.cpf,
+  //               rg: data.rg,
+  //               gender: data.gender,
+  //               birthCity: data.birthCity,
+  //               birthDate: data.birthDate,
+  //             },
+  //           });
+  //         } else if (type === "judiciary") {
+  //           await prisma.judiciaryPerson.update({
+  //             where: { personId: id },
+  //             data: {
+  //               socialReason: data.socialReason,
+  //               fantasyName: data.fantasyName,
+  //               headquarters: data.headquarters,
+  //               foundingDate: data.foundingDate,
+  //             },
+  //           });
+  //         }
+  //         socket.emit("person:update:success", updatedPerson);
+  //       }
+  //     } catch (error) {
+  //       socket.emit("person:update:failure", error);
+  //       console.log(error);
+  //     }
+  //   }
+
   static async list(socket: Socket) {
     try {
       const persons = await prisma.person.findMany({
@@ -155,14 +230,19 @@ export class Person {
   }
 
   static async find(socket: Socket, id: number) {
-    const person = await prisma.person.findUnique({
-      where: { id },
-      include,
-    });
-    if (person) {
-      socket.emit("person:find:success", person);
-    } else {
-      throw "cadastro não encontrado";
+    try {
+      const person = await prisma.person.findUnique({
+        where: { id },
+        include,
+      });
+      if (person) {
+        socket.emit("person:find:success", person);
+      } else {
+        throw "cadastro não encontrado";
+      }
+    } catch (error) {
+      socket.emit("person:find:failure", error);
+      console.log(error);
     }
   }
 
