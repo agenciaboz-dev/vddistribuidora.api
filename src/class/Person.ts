@@ -154,6 +154,18 @@ export class Person {
     }
   }
 
+  static async find(socket: Socket, id: number) {
+    const person = await prisma.person.findUnique({
+      where: { id },
+      include,
+    });
+    if (person) {
+      socket.emit("person:find:success", person);
+    } else {
+      throw "cadastro não encontrado";
+    }
+  }
+
   load(data: PersonPrisma) {
     this.id = data.id;
     this.registerDate = data.registerDate;

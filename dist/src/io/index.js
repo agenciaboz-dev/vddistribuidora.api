@@ -38,6 +38,7 @@ const handleSocket = (socket) => {
     socket.on("user:signup", (data) => User_1.User.signup(socket, data));
     socket.on("person:register", (data) => Person_1.Person.register(socket, data));
     socket.on("person:list", () => Person_1.Person.list(socket));
+    socket.on("person:find", (id) => Person_1.Person.find(socket, id));
 };
 exports.handleSocket = handleSocket;
 exports.default = { initializeIoServer: exports.initializeIoServer, getIoInstance: exports.getIoInstance, handleSocket: exports.handleSocket };

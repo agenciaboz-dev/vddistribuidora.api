@@ -41,6 +41,7 @@ export const handleSocket = (socket: Socket) => {
     Person.register(socket, data)
   );
   socket.on("person:list", () => Person.list(socket));
+  socket.on("person:find", (id: number) => Person.find(socket, id));
 };
 
 export default { initializeIoServer, getIoInstance, handleSocket };

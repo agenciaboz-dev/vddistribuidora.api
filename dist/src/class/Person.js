@@ -127,6 +127,20 @@ class Person {
             }
         });
     }
+    static find(socket, id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const person = yield index_1.prisma.person.findUnique({
+                where: { id },
+                include: include_1.person,
+            });
+            if (person) {
+                socket.emit("person:find:success", person);
+            }
+            else {
+                throw "cadastro não encontrado";
+            }
+        });
+    }
     load(data) {
         this.id = data.id;
         this.registerDate = data.registerDate;
