@@ -1,0 +1,66 @@
+
+model Person {
+
+    id                      Int @id @default(autoincrement())
+    registerDate            String
+
+    image                   String?
+    state                   String?
+    classification          String?
+    creditLimit             Float?
+    commission              Float?
+    antt                    String?
+    category                String?
+    accountingCategory      String?
+    municipalInscription    String?
+    range                   String?
+    suframaInscription      String?
+    route                   String?
+    cnae                    String?
+
+    finalConsumer           Boolean? @default(false)
+    client                  Boolean? @default(false)
+    transportCompany        Boolean? @default(false)
+    supplier                Boolean? @default(false)
+    employee                Boolean? @default(false)
+    salesman                Boolean? @default(false)
+    icmsExemption           Boolean? @default(false)
+    icmsContributor         Boolean? @default(false)
+    simpleFederalOptant     Boolean? @default(false)
+    nfeb2b                  Boolean? @default(false)
+    
+    physicalPersonId        Int?
+    physicalPerson          PhysicalPerson?
+    judiciaryPersonId       Int?
+    judiciaryPerson         JudiciaryPerson?
+
+}
+
+model PhysicalPerson {
+
+    id                      Int     @id @default(autoincrement())
+    name                    String
+    nickname                String
+    cpf                     String
+    rg                      String
+    gender                  String
+    birthCity               String
+    birthDate               String
+
+    person                  Person  @relation(fields: [personId], references: [id], onDelete: Cascade)
+    personId                Int     @unique
+
+}
+
+model JudiciaryPerson {
+
+    id                      Int @id @default(autoincrement())
+    socialReason            String
+    fantasyName             String
+    headquarters            String
+    foundingDate            String	
+
+    person                  Person  @relation(fields: [personId], references: [id], onDelete: Cascade)
+    personId                Int     @unique
+
+}

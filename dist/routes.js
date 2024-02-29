@@ -7,7 +7,7 @@ exports.router = void 0;
 const express_1 = __importDefault(require("express"));
 // import user from "./src/user"
 exports.router = express_1.default.Router();
-exports.router.get('/', (req, response) => {
+exports.router.get("/", (req, response) => {
     response.status(200).json({ success: true });
 });
 // router.use("/user", user)

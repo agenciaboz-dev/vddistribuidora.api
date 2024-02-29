@@ -14,13 +14,8 @@ export class User {
   phone: string;
   cpf: string;
 
-  constructor(id: number, user_prisma?: UserPrisma) {
+  constructor(id: number) {
     this.id = id;
-    this.name = user_prisma?.name ?? "";
-    this.email = user_prisma?.email ?? "";
-    this.password = user_prisma?.password ?? "1234";
-    this.phone = user_prisma?.phone ?? "";
-    this.cpf = user_prisma?.cpf ?? "";
   }
 
   async init() {
@@ -41,7 +36,7 @@ export class User {
           ...data,
         },
       });
-      const user = new User(user_prisma.id, user_prisma);
+      const user = new User(user_prisma.id);
       socket.emit("user:signup:success", user);
     } catch (error) {
       socket.emit("user:signup:failure", error);
@@ -57,8 +52,8 @@ export class User {
         password: data.password,
       },
     });
-    console.log(user_prisma);
-    console.log(data);
+    console.log("hello:", user_prisma);
+    console.log("bye", data);
 
     if (user_prisma) {
       const user = new User(user_prisma.id);

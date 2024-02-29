@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.handleSocket = exports.getIoInstance = exports.initializeIoServer = void 0;
 const socket_io_1 = require("socket.io");
 const User_1 = require("../../src/class/User");
+const Person_1 = require("../../src/class/Person");
 let io = null;
 const initializeIoServer = (server) => {
     io = new socket_io_1.Server(server, {
@@ -35,6 +36,8 @@ const handleSocket = (socket) => {
     }));
     socket.on("user:login", (data) => User_1.User.login(socket, data));
     socket.on("user:signup", (data) => User_1.User.signup(socket, data));
+    socket.on("person:register", (data) => Person_1.Person.register(socket, data));
+    socket.on("person:list", () => Person_1.Person.list(socket));
 };
 exports.handleSocket = handleSocket;
 exports.default = { initializeIoServer: exports.initializeIoServer, getIoInstance: exports.getIoInstance, handleSocket: exports.handleSocket };

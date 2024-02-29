@@ -3,6 +3,8 @@ import { Server as HttpServer } from "http";
 import { Server as HttpsServer } from "https";
 import { Socket } from "socket.io";
 import { User } from "../../src/class/User";
+import { Person } from "../../src/class/Person";
+import { PersonForm } from "../class/Person";
 import { LoginForm } from "../types/shared/user/login";
 import { SignupForm } from "../types/shared/user/signup";
 
@@ -34,6 +36,11 @@ export const handleSocket = (socket: Socket) => {
 
   socket.on("user:login", (data: LoginForm) => User.login(socket, data));
   socket.on("user:signup", (data: SignupForm) => User.signup(socket, data));
+
+  socket.on("person:register", (data: PersonForm) =>
+    Person.register(socket, data)
+  );
+  socket.on("person:list", () => Person.list(socket));
 };
 
 export default { initializeIoServer, getIoInstance, handleSocket };

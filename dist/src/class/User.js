@@ -12,14 +12,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = void 0;
 const index_1 = require("../prisma/index");
 class User {
-    constructor(id, user_prisma) {
-        var _a, _b, _c, _d, _e;
+    constructor(id) {
         this.id = id;
-        this.name = (_a = user_prisma === null || user_prisma === void 0 ? void 0 : user_prisma.name) !== null && _a !== void 0 ? _a : "";
-        this.email = (_b = user_prisma === null || user_prisma === void 0 ? void 0 : user_prisma.email) !== null && _b !== void 0 ? _b : "";
-        this.password = (_c = user_prisma === null || user_prisma === void 0 ? void 0 : user_prisma.password) !== null && _c !== void 0 ? _c : "1234";
-        this.phone = (_d = user_prisma === null || user_prisma === void 0 ? void 0 : user_prisma.phone) !== null && _d !== void 0 ? _d : "";
-        this.cpf = (_e = user_prisma === null || user_prisma === void 0 ? void 0 : user_prisma.cpf) !== null && _e !== void 0 ? _e : "";
     }
     init() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -40,7 +34,7 @@ class User {
                 const user_prisma = yield index_1.prisma.user.create({
                     data: Object.assign({}, data),
                 });
-                const user = new User(user_prisma.id, user_prisma);
+                const user = new User(user_prisma.id);
                 socket.emit("user:signup:success", user);
             }
             catch (error) {
@@ -58,8 +52,8 @@ class User {
                     password: data.password,
                 },
             });
-            console.log(user_prisma);
-            console.log(data);
+            console.log("hello:", user_prisma);
+            console.log("bye", data);
             if (user_prisma) {
                 const user = new User(user_prisma.id);
                 yield user.init();
