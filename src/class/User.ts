@@ -2,10 +2,10 @@ import { Prisma } from "@prisma/client";
 import { prisma } from "../prisma/index";
 import { Socket } from "socket.io";
 import { LoginForm } from "../types/shared/user/login";
-import { SignupForm } from "../types/shared/user/signup";
+import { WithoutFunctions } from "./helpers";
 
 export type UserPrisma = Prisma.UserGetPayload<{}>;
-
+export type UserForm = Omit<WithoutFunctions<User>, "id">;
 export class User {
   id: number;
   name: string;
@@ -29,7 +29,7 @@ export class User {
     }
   }
 
-  static async signup(socket: Socket, data: SignupForm) {
+  static async signup(socket: Socket, data: UserForm) {
     try {
       const user_prisma = await prisma.user.create({
         data: {
