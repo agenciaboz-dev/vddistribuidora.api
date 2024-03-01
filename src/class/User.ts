@@ -6,6 +6,7 @@ import { WithoutFunctions } from "./helpers";
 
 export type UserPrisma = Prisma.UserGetPayload<{}>;
 export type UserForm = Omit<WithoutFunctions<User>, "id">;
+
 export class User {
   id: number;
   name: string;

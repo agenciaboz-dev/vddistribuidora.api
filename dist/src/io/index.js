@@ -8,11 +8,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.handleSocket = exports.getIoInstance = exports.initializeIoServer = void 0;
 const socket_io_1 = require("socket.io");
 const User_1 = require("../../src/class/User");
 const Entity_1 = require("../class/Entity");
+const entity_1 = __importDefault(require("../Controllers/entity"));
 let io = null;
 const initializeIoServer = (server) => {
     io = new socket_io_1.Server(server, {
@@ -38,9 +42,10 @@ const handleSocket = (socket) => {
     socket.on("user:signup", (data) => User_1.User.signup(socket, data));
     socket.on("user:list", () => User_1.User.list(socket));
     socket.on("user:find", (id) => User_1.User.find(socket, id));
-    socket.on("entity:register", (data) => Entity_1.Person.register(socket, data));
-    socket.on("entity:list", () => Entity_1.Person.list(socket));
-    socket.on("entity:find", (id) => Entity_1.Person.find(socket, id));
+    // falta o judiciario
+    socket.on("entity:register", (data) => entity_1.default.register(socket, data));
+    socket.on("entity:list", () => Entity_1.Entity.list(socket));
+    socket.on("entity:find", (id) => Entity_1.Entity.find(socket, id));
     // socket.on("entity:update", (data) => Entity.update(data));
 };
 exports.handleSocket = handleSocket;

@@ -1,76 +1,63 @@
 import { Prisma } from "@prisma/client";
 import { prisma } from "../prisma/index";
-import { Person, EntityPrisma } from "./Entity";
-import { Socket } from "socket.io";
+import { Entity, EntityPrisma } from "./Entity"
+import { Socket } from "socket.io"
 // import { entity as include } from "../prisma/include";
-import { WithoutFunctions } from "./helpers";
+import { WithoutFunctions } from "./helpers"
+import { entity } from "../prisma/include"
 
-export type PhysicalEntityPrisma = Prisma.PhysicalEntityGetPayload<{}>;
+export type PhysicalEntityPrisma = Prisma.PhysicalEntityGetPayload<{}>
 
-export class PhysicalEntity extends Person {
-  name: string;
-  nickname: string;
-  cpf: string;
-  rg: string;
-  gender: string;
-  birthCity: string;
-  birthDate: string;
+export class PhysicalEntity extends Entity {
+    name: string
+    nickname: string
+    cpf: string
+    rg: string
+    gender: string
+    birthCity: string
+    birthDate: string
 
-  constructor(id: number) {
-    super(id);
-  }
-
-  static async register(socket: Socket, data: PhysicalEntityForm) {
-    try {
-      const entity_prisma = await prisma.physicalEntity.create({
-        data: {
-          name: data.name,
-          nickname: data.nickname,
-          cpf: data.cpf,
-          rg: data.rg,
-          gender: data.gender,
-          birthCity: data.birthCity,
-          birthDate: data.birthDate,
-          entity: {
-            connect: {
-              id: data.id,
-            },
-          },
-        },
-      });
-
-      socket.emit("entity:registry:success", entity_prisma);
-    } catch (error) {
-      socket.emit("entity:registry:failure", error);
-      console.log(error);
+    constructor(id: number) {
+        super(id)
     }
-  }
 
-  load(data: EntityPrisma & PhysicalEntityPrisma) {
-    super.load(data);
+    load(data: EntityPrisma & PhysicalEntityPrisma) {
+        super.load(data)
 
-    this.name = data.name;
-    this.nickname = data.nickname;
-    this.cpf = data.cpf;
-    this.rg = data.rg;
-    this.gender = data.gender;
-    this.birthCity = data.birthCity;
-    this.birthDate = data.birthDate;
-  }
+        this.name = data.name
+        this.nickname = data.nickname
+        this.cpf = data.cpf
+        this.rg = data.rg
+        this.gender = data.gender
+        this.birthCity = data.birthCity
+        this.birthDate = data.birthDate
+    }
 
-  //   update(data: Partial<Entity> & Partial<PhysicalEntity>) {
-  //     super.update(data);
-  //   }
+    async register(data: PhysicalEntityForm) {
+        const entity_prisma = await prisma.entity.update({
+            where: { id: this.id },
+            data: {
+                physicalEntity: {
+                    create: {
+                        ...data,
+                    },
+                },
+            },
+            include: entity,
+        })
+
+        this.load({ ...entity_prisma, ...entity_prisma.physicalEntity! })
+    }
 }
 
-export type PhysicalEntityForm = Omit<WithoutFunctions<Person>, "id"> & {
-  id?: number;
+export type PhysicalEntityForm = Omit<WithoutFunctions<Entity>, "id"> & {
+    id?: number
 
-  name: string;
-  nickname: string;
-  cpf: string;
-  rg: string;
-  gender: string;
-  birthCity: string;
-  birthDate: string;
-};
+    name: string
+    nickname: string
+    cpf: string
+    rg: string
+    gender: string
+    birthCity: string
+    birthDate: string
+}
