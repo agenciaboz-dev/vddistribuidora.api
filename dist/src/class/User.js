@@ -35,7 +35,7 @@ class User {
                     data: Object.assign({}, data),
                 });
                 const user = new User(user_prisma.id);
-                socket.emit("user:signup:success", user);
+                socket.emit("user:signup:success", user_prisma);
             }
             catch (error) {
                 socket.emit("user:signup:failure", error);
@@ -45,15 +45,12 @@ class User {
     }
     static login(socket, data) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(data);
             const user_prisma = yield index_1.prisma.user.findFirst({
                 where: {
                     OR: [{ email: data.login }, { cpf: data.login }],
                     password: data.password,
                 },
             });
-            console.log("hello:", user_prisma);
-            console.log("bye", data);
             if (user_prisma) {
                 const user = new User(user_prisma.id);
                 yield user.init();
@@ -62,6 +59,32 @@ class User {
             }
             else {
                 socket.emit("user:login:failure", "Senha ou Login incorretos");
+            }
+        });
+    }
+    static list(socket) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const users_prisma = yield index_1.prisma.user.findMany();
+            const users = yield Promise.all(users_prisma.map((user_prisma) => __awaiter(this, void 0, void 0, function* () {
+                const user = new User(user_prisma.id);
+                user.load(user_prisma);
+                return user;
+            })));
+            socket.emit("user:list:success", users);
+        });
+    }
+    static find(socket, id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const users_prisma = yield index_1.prisma.user.findUnique({
+                where: { id },
+            });
+            if (users_prisma !== null) {
+                const user = new User(users_prisma.id);
+                user.load(users_prisma);
+                socket.emit("user:find:success", user);
+            }
+            else {
+                socket.emit("user:find:failure", { message: "User not found.", id });
             }
         });
     }

@@ -1,5 +1,5 @@
 
-model Person {
+model Entity {
 
     id                      Int @id @default(autoincrement())
     registerDate            String
@@ -29,14 +29,14 @@ model Person {
     simpleFederalOptant     Boolean? @default(false)
     nfeb2b                  Boolean? @default(false)
     
-    physicalPersonId        Int?
-    physicalPerson          PhysicalPerson?
-    judiciaryPersonId       Int?
-    judiciaryPerson         JudiciaryPerson?
+    physicalEntitynId        Int?
+    physicalEntity          PhysicalEntity?
+    judiciaryEntityId       Int?
+    judiciaryEntity         JudiciaryEntity?
 
 }
 
-model PhysicalPerson {
+model PhysicalEntity {
 
     id                      Int     @id @default(autoincrement())
     name                    String
@@ -47,12 +47,12 @@ model PhysicalPerson {
     birthCity               String
     birthDate               String
 
-    person                  Person  @relation(fields: [personId], references: [id], onDelete: Cascade)
-    personId                Int     @unique
+    entity                  Entity  @relation(fields: [entityId], references: [id], onDelete: Cascade)
+    entityId                Int     @unique
 
 }
 
-model JudiciaryPerson {
+model JudiciaryEntity {
 
     id                      Int @id @default(autoincrement())
     socialReason            String
@@ -60,7 +60,7 @@ model JudiciaryPerson {
     headquarters            String
     foundingDate            String	
 
-    person                  Person  @relation(fields: [personId], references: [id], onDelete: Cascade)
-    personId                Int     @unique
+    entity                  Entity  @relation(fields: [entityId], references: [id], onDelete: Cascade)
+    entityId                Int     @unique
 
 }

@@ -7,11 +7,11 @@ model Address {
     uf              String
     city            String
 
-    personId        Int             
-    person          Person          @relation(fields: [personId], references: [id], onDelete: Cascade)
+    entityId        Int             
+    entity          Entity          @relation(fields: [entityId], references: [id], onDelete: Cascade)
 }
 
-model Person {
+model Entity {
     id              Int             @id @default(autoincrement())
     addresses       Address[]
 }

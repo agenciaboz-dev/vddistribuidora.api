@@ -41,7 +41,7 @@ class Address {
         this.number = data.number;
         this.street = data.street;
         this.uf = data.uf;
-        this.personId = data.personId;
+        this.entityId = data.entityId;
     }
 }
 exports.Address = Address;

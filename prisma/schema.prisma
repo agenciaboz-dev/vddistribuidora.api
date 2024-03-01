@@ -14,9 +14,8 @@ model User {
 	cpf String @unique
 	phone String 
 	password String 
-	role Role @default(CLIENT)
 }
-model Person {
+model Entity {
 	id Int @id @default(autoincrement())
 	registerDate String 
 	image String? 
@@ -42,13 +41,13 @@ model Person {
 	icmsContributor Boolean? @default(false)
 	simpleFederalOptant Boolean? @default(false)
 	nfeb2b Boolean? @default(false)
-	physicalPersonId Int? 
-	physicalPerson PhysicalPerson? @relation(name: "PersonToPhysicalPerson")
-	judiciaryPersonId Int? 
-	judiciaryPerson JudiciaryPerson? @relation(name: "JudiciaryPersonToPerson")
-	addresses Address[] @relation(name: "AddressToPerson")
+	physicalEntitynId Int? 
+	physicalEntity PhysicalEntity? @relation(name: "EntityToPhysicalEntity")
+	judiciaryEntityId Int? 
+	judiciaryEntity JudiciaryEntity? @relation(name: "EntityToJudiciaryEntity")
+	addresses Address[] @relation(name: "AddressToEntity")
 }
-model PhysicalPerson {
+model PhysicalEntity {
 	id Int @id @default(autoincrement())
 	name String 
 	nickname String 
@@ -57,17 +56,17 @@ model PhysicalPerson {
 	gender String 
 	birthCity String 
 	birthDate String 
-	person Person @relation(name: "PersonToPhysicalPerson", fields: [personId], references: [id], onDelete: Cascade)
-	personId Int @unique
+	entity Entity @relation(name: "EntityToPhysicalEntity", fields: [entityId], references: [id], onDelete: Cascade)
+	entityId Int @unique
 }
-model JudiciaryPerson {
+model JudiciaryEntity {
 	id Int @id @default(autoincrement())
 	socialReason String 
 	fantasyName String 
 	headquarters String 
 	foundingDate String 
-	person Person @relation(name: "JudiciaryPersonToPerson", fields: [personId], references: [id], onDelete: Cascade)
-	personId Int @unique
+	entity Entity @relation(name: "EntityToJudiciaryEntity", fields: [entityId], references: [id], onDelete: Cascade)
+	entityId Int @unique
 }
 model Address {
 	id Int @id @default(autoincrement())
@@ -77,13 +76,6 @@ model Address {
 	district String 
 	uf String 
 	city String 
-	personId Int 
-	person Person @relation(name: "AddressToPerson", fields: [personId], references: [id], onDelete: Cascade)
-}
-enum Role {
-	ADMIN
-	SALES
-	MANAGER
-	ACCOUNTANT
-	CLIENT
+	entityId Int 
+	entity Entity @relation(name: "AddressToEntity", fields: [entityId], references: [id], onDelete: Cascade)
 }

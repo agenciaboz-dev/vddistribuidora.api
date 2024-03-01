@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client";
 import viacep from "../api/viacep";
 import { Socket } from "socket.io";
-import { WithoutFunctions } from "./methodizer";
+import { WithoutFunctions } from "./helpers";
 
 export type AddressPrisma = Prisma.AddressGetPayload<{}>;
 
@@ -13,7 +13,7 @@ export class Address {
   district: string;
   uf: string;
   city: string;
-  personId: number;
+  entityId: number;
 
   constructor(data: AddressPrisma) {
     this.init(data);
@@ -41,7 +41,7 @@ export class Address {
     this.number = data.number;
     this.street = data.street;
     this.uf = data.uf;
-    this.personId = data.personId;
+    this.entityId = data.entityId;
   }
 }
 
