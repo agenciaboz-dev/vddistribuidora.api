@@ -4,7 +4,7 @@
       "input": [
         "prisma/base.prisma",
         "prisma/models/user.prisma",
-        "prisma/models/person.prisma",
+        "prisma/models/entity.prisma",
         "prisma/models/address.prisma"
       ],
       "output": "prisma/schema.prisma"

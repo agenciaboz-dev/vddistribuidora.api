@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client";
 
-export const person = Prisma.validator<Prisma.PersonInclude>()({
+export const entity = Prisma.validator<Prisma.EntityInclude>()({
   addresses: true,
-  judiciaryPerson: true,
-  physicalPerson: true,
+  judiciaryEntity: true,
+  physicalEntity: true,
 });
