@@ -62,6 +62,7 @@ model PhysicalEntity {
 model JudiciaryEntity {
 	id Int @id @default(autoincrement())
 	socialReason String 
+	cnpj String 
 	fantasyName String 
 	headquarters String 
 	foundingDate String 

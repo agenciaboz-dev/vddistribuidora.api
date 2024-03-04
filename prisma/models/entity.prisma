@@ -56,9 +56,11 @@ model JudiciaryEntity {
 
     id                      Int @id @default(autoincrement())
     socialReason            String
+    cnpj                    String
     fantasyName             String
     headquarters            String
-    foundingDate            String	
+    foundingDate            String
+
 
     entity                  Entity  @relation(fields: [entityId], references: [id], onDelete: Cascade)
     entityId                Int     @unique
