@@ -4,12 +4,12 @@ import { Socket } from "socket.io";
 import { Address, AddressForm } from "./Address";
 
 import { entity as include } from "../prisma/include";
-import { WithoutFunctions } from "./helpers";
+import { ImageUpload, WithoutFunctions } from "./helpers";
+import entity from "../Controllers/entity";
 
-// import { handlePrismaError, user_errors } from "../prisma/errors"
-// import { saveImage } from "../tools/saveImage"
+import { handlePrismaError, user_errors } from "../prisma/errors";
+import { saveImage } from "../tools/saveImage";
 // import { Log } from "./Log"
-// import { ImageUpload, WithoutFunctions } from "./methodizer"
 
 export type EntityPrisma = Prisma.EntityGetPayload<{ include: typeof include }>;
 export type JudiciaryEntityPrisma = Prisma.JudiciaryEntityGetPayload<{}>;
@@ -20,7 +20,7 @@ export class Entity {
   registerDate: string;
 
   // Optional Data
-  image?: string;
+  image?: string | null | ImageUpload;
   state?: string;
   classification?: string;
   creditLimit?: number;
@@ -65,20 +65,20 @@ export class Entity {
     }
   }
 
-  //   static async update(data: never) {
-  //     const user = data.physicalEntity
-  //       ? new PessoaFisica()
-  //       : new PessoaJuridica();
-
-  //     user.update(data);
-  //   }
+  static async update(
+    data: Partial<EntityPrisma> & { id: number },
+    socket: Socket,
+    entity_id?: number
+  ) {
+    const entity = new Entity(data.id);
+    await entity.init();
+    await entity.update(data, socket);
+  }
 
   static async register(data: EntityForm) {
-    const registerDate = new Date().getTime().toString();
-
     const entity_prisma = await prisma.entity.create({
       data: {
-        image: data.image,
+        image: "",
         state: data.state,
         classification: data.classification,
         creditLimit: data.creditLimit,
@@ -100,7 +100,7 @@ export class Entity {
         icmsContributor: data.icmsContributor,
         simpleFederalOptant: data.simpleFederalOptant,
         nfeb2b: data.nfeb2b,
-        registerDate,
+        registerDate: new Date().getTime().toString(),
         addresses: data.addresses
           ? {
               create: data.addresses.map((address) => ({
@@ -117,83 +117,31 @@ export class Entity {
       include,
     });
 
+    const entity = new Entity(entity_prisma.id);
+    entity.load(entity_prisma);
+    if (data.image) {
+      // @ts-ignore
+      if (data.image?.file) {
+        // @ts-ignore
+        // prettier-ignore
+        const url = saveImage(`entities/${this.id}/`, data.image.file as ArrayBuffer, data.image.name);
+        await entity.update({ image: url });
+      }
+    }
+
     return entity_prisma;
   }
 
-  //   static async update(socket: Socket, data: PersonForm) {
-  //     try {
-  //       const { id, type } = data;
-  //       const person = await prisma.person.findUnique({
-  //         where: { id },
-  //         include,
-  //       });
-  //       if (person) {
-  //         const updatedPerson = await prisma.person.update({
-  //           where: { id },
-  //           data: {
-  //             image: data.image,
-  //             state: data.state,
-  //             classification: data.classification,
-  //             creditLimit: data.creditLimit,
-  //             commission: data.commission,
-  //             antt: data.antt,
-  //             category: data.category,
-  //             accountingCategory: data.accountingCategory,
-  //             municipalInscription: data.municipalInscription,
-  //             range: data.range,
-  //             suframaInscription: data.suframaInscription,
-  //             route: data.route,
-  //             finalConsumer: data.finalConsumer,
-  //             client: data.client,
-  //             transportCompany: data.transportCompany,
-  //             supplier: data.supplier,
-  //             employee: data.employee,
-  //             salesman: data.salesman,
-  //             icmsExemption: data.icmsExemption,
-  //             icmsContributor: data.icmsContributor,
-  //             simpleFederalOptant: data.simpleFederalOptant,
-  //             nfeb2b: data.nfeb2b,
-  //             addresses: data.addresses
-  //               ? {
-  //                   connect: data.addresses.map((address) => ({
-  //                     id: address.id,
-  //                   })),
-  //                 }
-  //               : undefined,
-  //           },
-  //           include,
-  //         });
-  //         if (type === "physical") {
-  //           await prisma.physicalPerson.update({
-  //             where: { personId: id },
-  //             data: {
-  //               name: data.name,
-  //               nickname: data.nickname,
-  //               cpf: data.cpf,
-  //               rg: data.rg,
-  //               gender: data.gender,
-  //               birthCity: data.birthCity,
-  //               birthDate: data.birthDate,
-  //             },
-  //           });
-  //         } else if (type === "judiciary") {
-  //           await prisma.judiciaryPerson.update({
-  //             where: { personId: id },
-  //             data: {
-  //               socialReason: data.socialReason,
-  //               fantasyName: data.fantasyName,
-  //               headquarters: data.headquarters,
-  //               foundingDate: data.foundingDate,
-  //             },
-  //           });
-  //         }
-  //         socket.emit("person:update:success", updatedPerson);
-  //       }
-  //     } catch (error) {
-  //       socket.emit("person:update:failure", error);
-  //       console.log(error);
-  //     }
-  //   }
+  static async delete(socket: Socket, id: number) {
+    try {
+      const deleted = await prisma.entity.delete({ where: { id }, include });
+      socket.emit("entity:deletion:success", deleted);
+      socket.broadcast.emit("entity:deleted", deleted);
+    } catch (error) {
+      console.log(error);
+      socket.emit("entity:deletion:error", error?.toString());
+    }
+  }
 
   static async list(socket: Socket) {
     try {
@@ -227,8 +175,86 @@ export class Entity {
     this.registerDate = data.registerDate;
   }
 
-  update(data: Partial<Entity>) {
-    console.log("pai");
+  async update(data: Partial<EntityPrisma>, socket?: Socket) {
+    // @ts-ignore
+    if (data.image?.file) {
+      // @ts-ignore
+      // prettier-ignore
+      data.image = saveImage(`entities/${this.id}/`, data.image.file as ArrayBuffer, data.image.name);
+    }
+
+    try {
+      const updatePromises = [];
+
+      const existingAddresses = data.addresses?.filter((a) => a.id) || [];
+      const newAddresses = data.addresses?.filter((a) => !a.id) || [];
+
+      // Update existing addresses
+      existingAddresses.forEach((address) => {
+        if (address.id) {
+          updatePromises.push(
+            prisma.address.update({
+              where: { id: address.id },
+              data: {
+                cep: address.cep,
+                city: address.city,
+                district: address.district,
+                number: address.number,
+                street: address.street,
+                uf: address.uf,
+              },
+            })
+          );
+        }
+      });
+
+      // Create new addresses
+      if (newAddresses.length > 0) {
+        updatePromises.push(
+          prisma.address.createMany({
+            data: newAddresses.map(({ id, ...rest }) => ({
+              ...rest,
+              entityId: this.id, // Assume entityId is how addresses are linked to the entity
+            })),
+          })
+        );
+      }
+
+      // Update the entity itself (excluding address-related data here)
+      updatePromises.push(
+        prisma.entity.update({
+          where: { id: this.id },
+          data: {
+            // Include other entity fields from `data` as needed
+          },
+        })
+      );
+
+      try {
+        // Execute all updates as a transaction
+        await prisma.$transaction(updatePromises);
+
+        if (socket) {
+          // Emit success event; consider reloading entity data to send back updated data
+          socket.emit("entity:update:success", {
+            id: this.id /*, Reloaded data*/,
+          });
+        }
+      } catch (error) {
+        console.error("Failed to update entity and addresses:", error);
+        if (socket) {
+          socket.emit(
+            "entity:update:error",
+            error || "Failed to update entity and addresses"
+          );
+        }
+      }
+    } catch (error) {
+      console.log(error);
+      if (socket) {
+        socket.emit("entity:update:error", error?.toString());
+      }
+    }
   }
 }
 

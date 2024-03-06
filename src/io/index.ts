@@ -3,8 +3,8 @@ import { Server as HttpServer } from "http";
 import { Server as HttpsServer } from "https";
 import { Socket } from "socket.io";
 import { User, UserForm } from "../../src/class/User";
-import { Entity } from "../class/Entity";
-import { EntityForm } from "../class/Entity";
+import { Entity, EntityForm } from "../class/Entity";
+import { Packaging, PackagingForm } from "../class/Packaging";
 import { LoginForm } from "../types/shared/user/login";
 import { PhysicalEntity, PhysicalEntityForm } from "../class/PhysicalEntity";
 import { JudiciaryEntity, JudiciaryEntityForm } from "../class/JudiciaryEntity";
@@ -45,8 +45,15 @@ export const handleSocket = (socket: Socket) => {
   socket.on("entity:register",(data: EntityForm & {physical_data?: PhysicalEntityForm; judiciary_data?: JudiciaryEntityForm; }) => entity_controller.register(socket, data));
   socket.on("entity:list", () => Entity.list(socket));
   socket.on("entity:find", (id: number) => Entity.find(socket, id));
-
-  // socket.on("entity:update", (data) => Entity.update(data));
+  socket.on("entity:delete", (id: number) => Entity.delete(socket, id));
+  socket.on("entity:update", (data) => {
+    Entity.update(data, socket);
+  });
+  socket.on("packaging:create", (data) => Packaging.register(socket, data));
+  socket.on("packaging:delete", (id: number) => Packaging.delete(socket, id));
+  socket.on("packaging:find", (id: number) => Packaging.find(socket, id));
+  socket.on("packaging:list", () => Packaging.list(socket));
+  socket.on("packaging:update", (data) => Packaging.update(socket, data));
 };
 
 export default { initializeIoServer, getIoInstance, handleSocket };

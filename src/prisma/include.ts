@@ -5,3 +5,5 @@ export const entity = Prisma.validator<Prisma.EntityInclude>()({
   judiciaryEntity: true,
   physicalEntity: true,
 });
+
+// export const packaging = Prisma.validator<Prisma.PackagingInclude>()({});

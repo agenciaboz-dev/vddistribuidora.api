@@ -80,3 +80,9 @@ model Address {
 	entityId Int 
 	entity Entity @relation(name: "AddressToEntity", fields: [entityId], references: [id], onDelete: Cascade)
 }
+model Packaging {
+	id Int @id @default(autoincrement())
+	name String 
+	description String 
+	image String 
+}
