@@ -31,7 +31,7 @@ model ProductStock {
     street                      String
     state                       String
     city                        String
-    neighborhood                String
+    district                    String
 
     productStock                ProductStock[]
         

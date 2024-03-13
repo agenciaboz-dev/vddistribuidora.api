@@ -1,8 +1,7 @@
 import { Prisma, PrismaClient } from "@prisma/client";
 import { Socket } from "socket.io";
-import { ProductReceipt } from "./Receipt";
-import { ReceiptForm } from "./Receipt";
-// import { ProductStockForm } from "./Stock";
+import { ProductReceipt, ReceiptForm } from "./Receipt";
+import { ProductStockForm, ProductStock } from "./Stock/StockProduct";
 import { WithoutFunctions } from "./helpers";
 
 const prisma = new PrismaClient();
@@ -30,6 +29,7 @@ export class Product {
   volume?: string;
 
   receipt?: ProductReceipt[]; // Made optional to handle cases where it's not yet set
+  productStock?: ProductStock[]; // Made optional to handle cases where it's not yet set
 
   constructor(id: number) {
     this.id = id;
@@ -55,9 +55,9 @@ export class Product {
           receipt: {
             create: data.receipt,
           },
-          //   productStock: {
-          //     create: data.productStock,
-          //   },
+          productStock: {
+            create: data.productStock,
+          },
         },
         include: { receipt: true },
       });
@@ -93,9 +93,12 @@ export class Product {
   }
 }
 
-export type ProductForm = Omit<WithoutFunctions<Product>, "receipt" | "id"> & {
+export type ProductForm = Omit<
+  WithoutFunctions<Product>,
+  "productStock" | "receipt" | "id"
+> & {
   receipt?: ReceiptForm[];
-  //   productStock?: ProductStockForm[];
+  productStock?: ProductStockForm[];
 
   id?: number;
 

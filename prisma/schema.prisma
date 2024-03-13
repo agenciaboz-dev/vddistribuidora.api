@@ -111,7 +111,7 @@ model StockLocation {
 	street String 
 	state String 
 	city String 
-	neighborhood String 
+	district String 
 	productStock ProductStock[] @relation(name: "ProductStockToStockLocation")
 }
 model Product {
