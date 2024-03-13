@@ -260,6 +260,7 @@ export class Entity {
 
 export type EntityForm = Omit<WithoutFunctions<Entity>, "address" | "id"> & {
   addresses?: AddressForm[];
+
   id?: number;
   // Fields specific to PhysicalEntity
   name: string;

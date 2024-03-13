@@ -5,6 +5,8 @@ import { Socket } from "socket.io";
 import { User, UserForm } from "../../src/class/User";
 import { Entity, EntityForm } from "../class/Entity";
 import { Packaging, PackagingForm } from "../class/Packaging";
+import { Product, ProductForm } from "../class/Product";
+
 import { LoginForm } from "../types/shared/user/login";
 import { PhysicalEntity, PhysicalEntityForm } from "../class/PhysicalEntity";
 import { JudiciaryEntity, JudiciaryEntityForm } from "../class/JudiciaryEntity";
@@ -49,11 +51,17 @@ export const handleSocket = (socket: Socket) => {
   socket.on("entity:update", (data) => {
     Entity.update(data, socket);
   });
-  socket.on("packaging:create", (data) => Packaging.register(socket, data));
+  socket.on("packaging:create", (data: PackagingForm) =>
+    Packaging.register(socket, data)
+  );
   socket.on("packaging:delete", (id: number) => Packaging.delete(socket, id));
   socket.on("packaging:find", (id: number) => Packaging.find(socket, id));
   socket.on("packaging:list", () => Packaging.list(socket));
   socket.on("packaging:update", (data) => Packaging.update(socket, data));
+
+  socket.on("product:create", (data: ProductForm) =>
+    Product.create(socket, data)
+  );
 };
 
 export default { initializeIoServer, getIoInstance, handleSocket };

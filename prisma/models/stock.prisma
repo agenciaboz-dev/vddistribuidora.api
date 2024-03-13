@@ -1,20 +1,14 @@
-model Product {
-    id                          Int             @id @default(autoincrement())
-    productStock               ProductStock[]
-}
-
-
 model ProductStock {
 
     id                          Int             @id @default(autoincrement())
 
-    unidades                    String
+    units                       String
     weightCcm3                  String
     massGrams                   String
     volumeCm3                   String
     productionToleranceType     String
     percentageProductTolerance  String
-    // Need to understand what this is later
+    // Need to understand what stockConfig means later
     stockConfig                 String
     minQuantity                 String
     baseCostValue               String
@@ -41,6 +35,14 @@ model ProductStock {
 
     productStock                ProductStock[]
         
+
+        
 }
+
+model Product {
+    id                         Int             @id @default(autoincrement())
+    productStock               ProductStock[]
+}
+
 
 

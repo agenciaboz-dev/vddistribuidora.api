@@ -8,16 +8,16 @@ model Product {
     unit                        String
     features                    String
     // "Geral". Não tenho certeza se isso é um relacionamento ou parte do modelo
-    brand                       String
-    category                    String
-    subcategory                 String
-    unitMeasure                 String
-    SKU                         String
-    validity                    String
-    liqWeight                   String
-    grossWeight                 String
-    mass                        String
-    volume                      String
+    brand                       String?
+    category                    String?
+    subcategory                 String?
+    unitMeasure                 String?
+    sku                         String?
+    validity                    String?
+    liqWeight                   String?
+    grossWeight                 String?
+    mass                        String?
+    volume                      String?
 
     receipt                     ProductReceipt[]
 

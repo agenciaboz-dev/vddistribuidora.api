@@ -7,8 +7,8 @@
         "prisma/models/entity.prisma",
         "prisma/models/address.prisma",
         "prisma/models/packaging.prisma",
-        "prisma/models/products.prisma",
-        "prisma/models/stock.prisma"
+        "prisma/models/stock.prisma",
+        "prisma/models/product.prisma"
       ],
       "output": "prisma/schema.prisma"
     }

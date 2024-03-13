@@ -86,13 +86,9 @@ model Packaging {
 	description String 
 	image String 
 }
-model Product {
-	id Int @id @default(autoincrement())
-	productStock ProductStock[] @relation(name: "ProductToProductStock")
-}
 model ProductStock {
 	id Int @id @default(autoincrement())
-	unidades String 
+	units String 
 	weightCcm3 String 
 	massGrams String 
 	volumeCm3 String 
@@ -117,4 +113,44 @@ model StockLocation {
 	city String 
 	neighborhood String 
 	productStock ProductStock[] @relation(name: "ProductStockToStockLocation")
+}
+model Product {
+	id Int @id @default(autoincrement())
+	productStock ProductStock[] @relation(name: "ProductToProductStock")
+	name String 
+	description String 
+	image String 
+	drawingModel String 
+	unit String 
+	features String 
+	brand String? 
+	category String? 
+	subcategory String? 
+	unitMeasure String? 
+	sku String? 
+	validity String? 
+	liqWeight String? 
+	grossWeight String? 
+	mass String? 
+	volume String? 
+	receipt ProductReceipt[] @relation(name: "ProductToProductReceipt")
+}
+model ProductReceipt {
+	id Int @id @default(autoincrement())
+	number String 
+	productCode String 
+	receiptDescription String 
+	cfop String 
+	ncm String 
+	commercialUnit String 
+	tributaryUnit String 
+	commercialQuantity String 
+	tributaryQuantity String 
+	commercialUnitValue String 
+	tributaryUnitValue String 
+	grossValue String 
+	icmsOrigin String 
+	additionalInfo String 
+	productId Int 
+	product Product @relation(name: "ProductToProductReceipt", fields: [productId], references: [id])
 }
