@@ -1,0 +1,46 @@
+model Product {
+    id                          Int             @id @default(autoincrement())
+    productStock               ProductStock[]
+}
+
+
+model ProductStock {
+
+    id                          Int             @id @default(autoincrement())
+
+    unidades                    String
+    weightCcm3                  String
+    massGrams                   String
+    volumeCm3                   String
+    productionToleranceType     String
+    percentageProductTolerance  String
+    // Need to understand what this is later
+    stockConfig                 String
+    minQuantity                 String
+    baseCostValue               String
+    estimatedCost               String
+    suggestedCost               String
+
+    productId                   Int
+    product                     Product         @relation(fields: [productId], references: [id])
+
+    stockLocationId             Int
+    stockLocation               StockLocation   @relation(fields: [stockLocationId], references: [id])
+    
+}
+
+ model StockLocation {
+
+    id                          Int             @id @default(autoincrement())
+    name                        String
+    cep                         String
+    street                      String
+    state                       String
+    city                        String
+    neighborhood                String
+
+    productStock                ProductStock[]
+        
+}
+
+

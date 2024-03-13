@@ -6,3 +6,5 @@ model Packaging {
     image           String
     
 }
+
+// Tem alguma relação com a tabela de produtos mas não está clara ainda

@@ -86,3 +86,35 @@ model Packaging {
 	description String 
 	image String 
 }
+model Product {
+	id Int @id @default(autoincrement())
+	productStock ProductStock[] @relation(name: "ProductToProductStock")
+}
+model ProductStock {
+	id Int @id @default(autoincrement())
+	unidades String 
+	weightCcm3 String 
+	massGrams String 
+	volumeCm3 String 
+	productionToleranceType String 
+	percentageProductTolerance String 
+	stockConfig String 
+	minQuantity String 
+	baseCostValue String 
+	estimatedCost String 
+	suggestedCost String 
+	productId Int 
+	product Product @relation(name: "ProductToProductStock", fields: [productId], references: [id])
+	stockLocationId Int 
+	stockLocation StockLocation @relation(name: "ProductStockToStockLocation", fields: [stockLocationId], references: [id])
+}
+model StockLocation {
+	id Int @id @default(autoincrement())
+	name String 
+	cep String 
+	street String 
+	state String 
+	city String 
+	neighborhood String 
+	productStock ProductStock[] @relation(name: "ProductStockToStockLocation")
+}

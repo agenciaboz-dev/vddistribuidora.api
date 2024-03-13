@@ -6,7 +6,9 @@
         "prisma/models/user.prisma",
         "prisma/models/entity.prisma",
         "prisma/models/address.prisma",
-        "prisma/models/packaging.prisma"
+        "prisma/models/packaging.prisma",
+        "prisma/models/products.prisma",
+        "prisma/models/stock.prisma"
       ],
       "output": "prisma/schema.prisma"
     }
