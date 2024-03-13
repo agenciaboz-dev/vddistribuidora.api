@@ -22,11 +22,11 @@ export class StockLocation {
   }
 
   async init() {
-    const locationPrisma = await prisma.stockLocation.findUnique({
+    const stockLocationPrisma = await prisma.stockLocation.findUnique({
       where: { id: this.id },
     });
-    if (locationPrisma) {
-      this.load(locationPrisma);
+    if (stockLocationPrisma) {
+      this.load(stockLocationPrisma);
     } else {
       throw "cadastro não encontrado";
     }
