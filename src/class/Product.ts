@@ -1,4 +1,5 @@
 import { Prisma, PrismaClient } from "@prisma/client";
+import { product as include } from "../prisma/include";
 import { Socket } from "socket.io";
 import { ProductReceipt, ReceiptForm } from "./Receipt";
 import { ProductStockForm, ProductStock } from "./Stock/StockProduct";
@@ -6,7 +7,9 @@ import { WithoutFunctions } from "./helpers";
 
 const prisma = new PrismaClient();
 
-export type ProductPrisma = Prisma.ProductGetPayload<{}>;
+export type ProductPrisma = Prisma.ProductGetPayload<{
+  include: typeof include;
+}>;
 export type ProductReceiptPrisma = Prisma.ProductReceiptGetPayload<{}>;
 
 export class Product {
@@ -39,6 +42,7 @@ export class Product {
     if (!this.id) throw new Error("Product ID is not set.");
     const productPrisma = await prisma.product.findUnique({
       where: { id: this.id },
+      include,
     });
     if (productPrisma) {
       this.load(productPrisma);
@@ -53,13 +57,13 @@ export class Product {
         data: {
           ...data,
           receipt: {
-            create: data.receipt,
+            create: data.receipt || [],
           },
           productStock: {
-            create: data.productStock,
+            create: data.productStock || [],
           },
         },
-        include: { receipt: true },
+        include: { receipt: true, productStock: true },
       });
 
       const product = new Product(productPrisma.id);
@@ -67,6 +71,20 @@ export class Product {
       socket.emit("product:creation:success", product);
     } catch (error) {
       socket.emit("product:creation:failure", error);
+      console.error(error);
+      throw error;
+    }
+  }
+
+  static async delete(socket: Socket, id: number, productId: number) {
+    try {
+      const deleted = prisma.product.delete({ where: { id } });
+      socket.emit("product:deletion:success", deleted);
+      socket.broadcast.emit("product:deleted", deleted);
+      const product = new Product(productId);
+      product.load(deleted);
+    } catch (error) {
+      socket.emit("product:deletion:error", error);
       console.error(error);
       throw error;
     }
@@ -90,6 +108,11 @@ export class Product {
     this.grossWeight = data.grossWeight || undefined;
     this.mass = data.mass || undefined;
     this.volume = data.volume || undefined;
+
+    this.receipt = data.receipt.map((receipt) => new ProductReceipt(receipt));
+    this.productStock = data.productStock.map(
+      (stock) => new ProductStock(stock.id)
+    );
   }
 }
 

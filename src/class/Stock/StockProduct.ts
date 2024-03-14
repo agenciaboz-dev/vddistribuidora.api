@@ -1,9 +1,13 @@
-import { Prisma, StockLocation } from "@prisma/client";
+import { Prisma } from "@prisma/client";
+import { productStock as include } from "../../prisma/include";
 import { prisma } from "../../prisma/index";
 import { Socket } from "socket.io";
 import { WithoutFunctions } from "../helpers";
+import { StockLocation } from "./StockLocation";
 
-export type ProductStockPrisma = Prisma.ProductStockGetPayload<{}>;
+export type ProductStockPrisma = Prisma.ProductStockGetPayload<{
+  include: typeof include;
+}>;
 export type StockLocationPrisma = Prisma.StockLocationGetPayload<{}>;
 
 export class ProductStock {
@@ -29,6 +33,7 @@ export class ProductStock {
   async init() {
     const productStockPrisma = await prisma.productStock.findUnique({
       where: { id: this.id },
+      include: include,
     });
     if (productStockPrisma) {
       this.load(productStockPrisma);
@@ -50,6 +55,9 @@ export class ProductStock {
     this.baseCostValue = data.baseCostValue;
     this.estimatedCost = data.estimatedCost;
     this.suggestedCost = data.suggestedCost;
+
+    if (data.stockLocation)
+      this.stockLocation = new StockLocation(data.stockLocation.id);
   }
 }
 
