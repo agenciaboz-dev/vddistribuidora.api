@@ -112,10 +112,8 @@ export class Product {
     this.mass = data.mass || undefined;
     this.volume = data.volume || undefined;
 
-    this.receipt = data.receipt.map((receipt) => new ProductReceipt(receipt));
-    this.productStock = data.productStock.map(
-      (stock) => new ProductStock(stock.id)
-    );
+    this.receipt = data.receipt.map((receipt) => new ProductReceipt(receipt))
+    this.productStock = data.productStock.map((stock_prisma) => new ProductStock(stock_prisma))
   }
 }
 

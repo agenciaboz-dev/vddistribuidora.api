@@ -7,9 +7,9 @@ export const entity = Prisma.validator<Prisma.EntityInclude>()({
 });
 
 export const product = Prisma.validator<Prisma.ProductInclude>()({
-  receipt: true,
-  productStock: true,
-});
+    receipt: true,
+    productStock: { include: { stockLocation: true } },
+})
 
 export const productStock = Prisma.validator<Prisma.ProductStockInclude>()({
   stockLocation: true,
