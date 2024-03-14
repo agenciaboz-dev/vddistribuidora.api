@@ -32,6 +32,28 @@ export class StockLocation {
     }
   }
 
+  //   static async create(socket: Socket, data: StockLocation) {
+  //     try {
+  //         const stockLocationPrisma = await prisma.stockLocation.create({
+  //             data: {
+  //                 ...data,
+  //                 productStock: {
+  //                     create: data.productStock,
+  //                 },
+  //             },
+  //             include: include,
+  //         });
+
+  //         const stockLocation = new StockLocation(stockLocationPrisma.id);
+  //         stockLocation.load(stockLocationPrisma);
+  //         socket.emit("stockLocation:creation:success", stockLocation);
+  //     } catch (error) {
+  //       socket.emit("stockLocation:creation:failure", error);
+  //       console.error(error);
+  //       throw error;
+  //     }
+  //   }
+
   load(data: StockLocationPrisma) {
     this.id = data.id;
     this.name = data.name;

@@ -63,7 +63,7 @@ export class Product {
             create: data.productStock || [],
           },
         },
-        include: { receipt: true, productStock: true },
+        include: include,
       });
 
       const product = new Product(productPrisma.id);
@@ -78,11 +78,14 @@ export class Product {
 
   static async delete(socket: Socket, id: number, productId: number) {
     try {
-      const deleted = prisma.product.delete({ where: { id } });
+      const deleted = prisma.product.delete({
+        where: { id },
+        include: include,
+      });
       socket.emit("product:deletion:success", deleted);
       socket.broadcast.emit("product:deleted", deleted);
       const product = new Product(productId);
-      product.load(deleted);
+      product.load(await deleted);
     } catch (error) {
       socket.emit("product:deletion:error", error);
       console.error(error);
@@ -120,7 +123,7 @@ export type ProductForm = Omit<
   WithoutFunctions<Product>,
   "productStock" | "receipt" | "id"
 > & {
-  receipt?: ReceiptForm[];
+  receipt?: ReceiptForm;
   productStock?: ProductStockForm[];
 
   id?: number;
