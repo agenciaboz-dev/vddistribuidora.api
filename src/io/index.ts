@@ -2,12 +2,17 @@ import { Server as SocketIoServer } from "socket.io";
 import { Server as HttpServer } from "http";
 import { Server as HttpsServer } from "https";
 import { Socket } from "socket.io";
-import { User, UserForm } from "../../src/class/User";
-import { Entity, EntityForm } from "../class/Entity";
-import { Packaging, PackagingForm } from "../class/Packaging";
-import { Product, ProductForm } from "../class/Product";
 
 import { LoginForm } from "../types/shared/user/login";
+
+import { User, UserForm } from "../../src/class/User";
+
+import { Packaging, PackagingForm } from "../class/Packaging";
+import { Product, ProductForm } from "../class/Product";
+import { StockLocation, StockLocationForm } from "../class/Stock/StockLocation";
+import { ProductStock, ProductStockForm } from "../class/Stock/StockProduct";
+
+import { Entity, EntityForm } from "../class/Entity";
 import { PhysicalEntity, PhysicalEntityForm } from "../class/PhysicalEntity";
 import { JudiciaryEntity, JudiciaryEntityForm } from "../class/JudiciaryEntity";
 import entity_controller from "../Controllers/entity";
@@ -62,6 +67,14 @@ export const handleSocket = (socket: Socket) => {
   socket.on("product:create", (data: ProductForm) =>
     Product.create(socket, data)
   );
+
+  socket.on("stockLocation:create", (data: StockLocationForm) => {
+    StockLocation.create(socket, data);
+  });
+
+  socket.on("productStock:create", (data: ProductStockForm) => {
+    ProductStock.create(socket, data);
+  });
 };
 
 export default { initializeIoServer, getIoInstance, handleSocket };

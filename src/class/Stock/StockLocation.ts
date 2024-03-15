@@ -2,9 +2,12 @@ import { Prisma } from "@prisma/client";
 import { prisma } from "../../prisma/index";
 import { Socket } from "socket.io";
 import { WithoutFunctions } from "../helpers";
+import { stockLocation as include } from "../../prisma/include";
 import { ProductStockForm, ProductStock } from "./StockProduct";
 
-export type StockLocationPrisma = Prisma.StockLocationGetPayload<{}>;
+export type StockLocationPrisma = Prisma.StockLocationGetPayload<{
+  include: typeof include;
+}>;
 
 export class StockLocation {
   id: number;
@@ -17,13 +20,14 @@ export class StockLocation {
 
   productStock?: ProductStock[];
 
-  constructor(id: number) {
-    this.id = id;
+  constructor(data: StockLocationPrisma) {
+    this.load(data);
   }
 
   async init() {
     const stockLocationPrisma = await prisma.stockLocation.findUnique({
       where: { id: this.id },
+      include: include,
     });
     if (stockLocationPrisma) {
       this.load(stockLocationPrisma);
@@ -32,27 +36,29 @@ export class StockLocation {
     }
   }
 
-  //   static async create(socket: Socket, data: StockLocation) {
-  //     try {
-  //         const stockLocationPrisma = await prisma.stockLocation.create({
-  //             data: {
-  //                 ...data,
-  //                 productStock: {
-  //                     create: data.productStock,
-  //                 },
-  //             },
-  //             include: include,
-  //         });
+  static async create(socket: Socket, data: StockLocationForm) {
+    try {
+      const stockLocationPrisma = await prisma.stockLocation.create({
+        data: {
+          name: data.name,
+          cep: data.cep,
+          street: data.street,
+          state: data.state,
+          city: data.city,
+          district: data.district,
+        },
+        include: include,
+      });
 
-  //         const stockLocation = new StockLocation(stockLocationPrisma.id);
-  //         stockLocation.load(stockLocationPrisma);
-  //         socket.emit("stockLocation:creation:success", stockLocation);
-  //     } catch (error) {
-  //       socket.emit("stockLocation:creation:failure", error);
-  //       console.error(error);
-  //       throw error;
-  //     }
-  //   }
+      const stockLocation = new StockLocation(stockLocationPrisma);
+      stockLocation.load(stockLocationPrisma);
+      socket.emit("stockLocation:creation:success", stockLocation);
+    } catch (error) {
+      socket.emit("stockLocation:creation:failure", error);
+      console.error(error);
+      throw error;
+    }
+  }
 
   load(data: StockLocationPrisma) {
     this.id = data.id;
@@ -66,25 +72,15 @@ export class StockLocation {
 }
 
 // prettier-ignore
-export type StockLocationForm = Omit<  WithoutFunctions<StockLocation>,  "productStock" | "id"> & {
+export type StockLocationForm = Omit<  WithoutFunctions<StockLocation>, "id"> & {
   productStock?: ProductStockForm[];
 
   id?: number;
+name: string;
+cep: string;
+street: string;
+state: string;
+city: string;
+district: string;
 
-  //   name: string;
-  //   description: string;
-  //   image: string;
-  //   drawingModel: string;
-  //   unit: string;
-  //   features: string;
-  //   brand: string;
-  //   category: string;
-  //   subcategory: string;
-  //   unitMeasure: string;
-  //   sku: string;
-  //   validity: string;
-  //   liqWeight: string;
-  //   grossWeight: string;
-  //   mass: string;
-  //   volume: string;
 };
