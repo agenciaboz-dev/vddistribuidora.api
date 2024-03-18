@@ -11,12 +11,13 @@ export const product = Prisma.validator<Prisma.ProductInclude>()({
   productStock: { include: { stockLocation: true } },
 });
 
-export const productStock = Prisma.validator<Prisma.ProductStockInclude>()({
-  stockLocation: { include: { productStock: true } },
-});
-
 export const stockLocation = Prisma.validator<Prisma.StockLocationInclude>()({
-  productStock: { include: { product: true } },
-});
+    productStock: { include: { product: true } },
+})
+
+export const productStock = Prisma.validator<Prisma.ProductStockInclude>()({
+    stockLocation: { include: stockLocation },
+})
+
 
 // export const packaging = Prisma.validator<Prisma.PackagingInclude>()({});
