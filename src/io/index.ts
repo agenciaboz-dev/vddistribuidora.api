@@ -42,12 +42,12 @@ export const handleSocket = (socket: Socket) => {
   socket.on("disconnect", async (reason) => {
     console.log(`disconnected: ${socket.id}`);
   });
-
+  // USER OPRTATIONS
   socket.on("user:login", (data: LoginForm) => User.login(socket, data));
   socket.on("user:signup", (data: UserForm) => User.signup(socket, data));
   socket.on("user:list", () => User.list(socket));
   socket.on("user:find", (id: number) => User.find(socket, id));
-
+  // ENTITY OPRTATIONS
   // prettier-ignore
   socket.on("entity:register",(data: EntityForm & {physical_data?: PhysicalEntityForm; judiciary_data?: JudiciaryEntityForm; }) => entity_controller.register(socket, data));
   socket.on("entity:list", () => Entity.list(socket));
@@ -56,6 +56,7 @@ export const handleSocket = (socket: Socket) => {
   socket.on("entity:update", (data) => {
     Entity.update(data, socket);
   });
+  // PACKAGING OPRTATIONS
   socket.on("packaging:create", (data: PackagingForm) =>
     Packaging.register(socket, data)
   );
@@ -63,15 +64,21 @@ export const handleSocket = (socket: Socket) => {
   socket.on("packaging:find", (id: number) => Packaging.find(socket, id));
   socket.on("packaging:list", () => Packaging.list(socket));
   socket.on("packaging:update", (data) => Packaging.update(socket, data));
-
+  // PRODUCT OPERTATIONS
   socket.on("product:create", (data: ProductForm) =>
     Product.create(socket, data)
   );
+  socket.on("product:delete", (id: number) => Product.delete(socket, id));
 
+  socket.on("product:find", (id: number) => Product.find(socket, id));
+  socket.on("product:list", () => Product.list(socket));
+
+  // STOCKLOCATION OPRTATIONS
   socket.on("stockLocation:create", (data: StockLocationForm) => {
     StockLocation.create(socket, data);
   });
 
+  // PRODUCTSTOCK OPRTATIONS
   socket.on("productStock:create", (data: ProductStockForm) => {
     ProductStock.create(socket, data);
   });

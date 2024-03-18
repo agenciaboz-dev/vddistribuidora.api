@@ -100,7 +100,7 @@ model ProductStock {
 	estimatedCost String 
 	suggestedCost String 
 	productId Int 
-	product Product @relation(name: "ProductToProductStock", fields: [productId], references: [id])
+	product Product @relation(name: "ProductToProductStock", fields: [productId], references: [id], onDelete: Cascade)
 	stockLocationId Int 
 	stockLocation StockLocation @relation(name: "ProductStockToStockLocation", fields: [stockLocationId], references: [id])
 }
@@ -152,5 +152,5 @@ model ProductReceipt {
 	icmsOrigin String 
 	additionalInfo String 
 	productId Int 
-	product Product @relation(name: "ProductToProductReceipt", fields: [productId], references: [id])
+	product Product @relation(name: "ProductToProductReceipt", fields: [productId], references: [id], onDelete: Cascade)
 }

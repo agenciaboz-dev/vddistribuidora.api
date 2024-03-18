@@ -76,21 +76,43 @@ export class Product {
     }
   }
 
-  static async delete(socket: Socket, id: number, productId: number) {
+  static async delete(socket: Socket, id: number) {
     try {
-      const deleted = prisma.product.delete({
+      const deleted = await prisma.product.delete({
         where: { id },
         include: include,
       });
+      console.log(deleted);
       socket.emit("product:deletion:success", deleted);
       socket.broadcast.emit("product:deleted", deleted);
-      const product = new Product(productId);
-      product.load(await deleted);
     } catch (error) {
       socket.emit("product:deletion:error", error);
       console.error(error);
       throw error;
     }
+  }
+
+  static async find(socket: Socket, id: number) {
+    const product = await prisma.product.findUnique({
+      where: { id },
+      include: include,
+    });
+    if (!product) {
+      const error = new Error(`Product with ID ${id} not found.`);
+      socket.emit("product:find:failure", error.message);
+      console.error(error);
+    } else {
+      console.log(product);
+      socket.emit("product:find:successful", product);
+    }
+  }
+
+  static async list(socket: Socket) {
+    const data = await prisma.product.findMany({ include });
+    console.log(data);
+    const list = data.map((item) => new Product(item.id).load(item));
+    console.log(list);
+    socket.emit("product:list:successful", list);
   }
 
   load(data: ProductPrisma) {
@@ -111,6 +133,10 @@ export class Product {
     this.grossWeight = data.grossWeight;
     this.mass = data.mass;
     this.volume = data.volume;
+
+    this.receipt = data.receipt.map((item) => new ProductReceipt(item));
+
+    return this;
   }
 }
 
