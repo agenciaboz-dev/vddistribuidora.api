@@ -1,14 +1,14 @@
 import { Prisma } from "@prisma/client";
-import { prisma } from "../prisma/index";
+import { prisma } from "../../prisma/index";
 import { Socket } from "socket.io";
-import { Address, AddressForm } from "./Address";
+import { Address, AddressForm } from "../Address";
 
-import { entity as include } from "../prisma/include";
-import { ImageUpload, WithoutFunctions } from "./helpers";
-import entity from "../Controllers/entity";
+import { entity as include } from "../../prisma/include";
+import { ImageUpload, WithoutFunctions } from "../helpers";
+import entity from "../../Controllers/entity";
 
-import { handlePrismaError, user_errors } from "../prisma/errors";
-import { saveImage } from "../tools/saveImage";
+import { handlePrismaError, user_errors } from "../../prisma/errors";
+import { saveImage } from "../../tools/saveImage";
 // import { Log } from "./Log"
 
 export type EntityPrisma = Prisma.EntityGetPayload<{ include: typeof include }>;

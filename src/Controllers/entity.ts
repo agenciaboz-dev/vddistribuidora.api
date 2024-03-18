@@ -1,7 +1,13 @@
 import { Socket } from "socket.io";
-import { Entity, EntityForm } from "../class/Entity";
-import { PhysicalEntity, PhysicalEntityForm } from "../class/PhysicalEntity";
-import { JudiciaryEntity, JudiciaryEntityForm } from "../class/JudiciaryEntity";
+import { Entity, EntityForm } from "../class/Entity/Entity";
+import {
+  PhysicalEntity,
+  PhysicalEntityForm,
+} from "../class/Entity/PhysicalEntity";
+import {
+  JudiciaryEntity,
+  JudiciaryEntityForm,
+} from "../class/Entity/JudiciaryEntity";
 import { entity as include } from "../prisma/include";
 
 const register = async (

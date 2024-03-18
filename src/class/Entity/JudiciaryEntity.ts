@@ -1,10 +1,10 @@
 import { Prisma } from "@prisma/client";
-import { prisma } from "../prisma/index";
+import { prisma } from "../../prisma/index";
 import { Entity, EntityPrisma } from "./Entity";
 import { Socket } from "socket.io";
 // import { entity as include } from "../prisma/include";
-import { WithoutFunctions } from "./helpers";
-import { entity } from "../prisma/include";
+import { WithoutFunctions } from "../helpers";
+import { entity } from "../../prisma/include";
 
 export type JudiciaryEntityPrisma = Prisma.JudiciaryEntityGetPayload<{}>;
 

@@ -1,5 +1,5 @@
 import { Prisma } from "@prisma/client";
-import { productStock as include } from "../../prisma/include";
+import { productStock as include, productStock } from "../../prisma/include";
 import { prisma } from "../../prisma/index";
 import { Socket } from "socket.io";
 import { WithoutFunctions } from "../helpers";
@@ -8,7 +8,6 @@ import { StockLocation } from "./StockLocation";
 export type ProductStockPrisma = Prisma.ProductStockGetPayload<{
   include: typeof include;
 }>;
-export type StockLocationPrisma = Prisma.StockLocationGetPayload<{}>;
 
 export class ProductStock {
   id: number;
@@ -23,6 +22,9 @@ export class ProductStock {
   baseCostValue: string;
   estimatedCost: string;
   suggestedCost: string;
+
+  // stockLocation: StockLocation | null;
+  // stockLocationId: number;
 
   constructor(data: ProductStockPrisma) {
     this.load(data);
@@ -56,26 +58,50 @@ export class ProductStock {
           estimatedCost: data.estimatedCost,
           suggestedCost: data.suggestedCost,
 
-          stockLocation:
-            {
-              connect: { id: data.stockLocationId },
-            } || undefined,
+          stockLocation: {
+            connect: { id: data.stockLocationId },
+          },
 
-          product:
-            {
-              connect: { id: data.productId },
-            } || undefined,
+          product: {
+            connect: { id: data.productId },
+          },
         },
-        include,
+        include: include,
       });
 
       const productStock = new ProductStock(productStockPrisma);
       productStock.load(productStockPrisma);
       socket.emit("productStock:creation:success", productStock);
-    } catch (error) {
-      socket.emit("productStock:creation:failure", error);
+    } catch (error: any) {
+      if (error.code === "P2025") {
+        socket.emit("productStock:creation:failure", `${error.meta.cause}`);
+      } else {
+        socket.emit("productStock:creation:failure", error);
+      }
       console.error(error);
-      throw error;
+    }
+  }
+
+  static async find(socket: Socket, id: number) {
+    try {
+      const productStockPrisma = await prisma.productStock.findUnique({
+        where: { id },
+        include: include,
+      });
+      console.log(productStockPrisma);
+      if (productStockPrisma) {
+        const productStock = new ProductStock(productStockPrisma);
+        console.log(productStock);
+        socket.emit("productStock:find:success", productStock);
+      } else {
+        socket.emit(
+          "productStock:find:failure",
+          `ProductStock with ID ${id} not found.`
+        );
+      }
+    } catch (error) {
+      console.log(error);
+      socket.emit("productStock:find:failure", error);
     }
   }
 
@@ -92,6 +118,8 @@ export class ProductStock {
     this.baseCostValue = data.baseCostValue;
     this.estimatedCost = data.estimatedCost;
     this.suggestedCost = data.suggestedCost;
+
+    // this.stockLocation = new StockLocation(data.stockLocation);
   }
 }
 

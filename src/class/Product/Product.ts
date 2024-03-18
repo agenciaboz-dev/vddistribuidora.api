@@ -1,9 +1,9 @@
 import { Prisma, PrismaClient } from "@prisma/client";
-import { product as include } from "../prisma/include";
+import { product as include } from "../../prisma/include";
 import { Socket } from "socket.io";
 import { ProductReceipt, ReceiptForm } from "./Receipt";
-import { ProductStockForm, ProductStock } from "./Stock/StockProduct";
-import { WithoutFunctions } from "./helpers";
+import { ProductStockForm, ProductStock } from "../Stock/StockProduct";
+import { WithoutFunctions } from "../helpers";
 
 const prisma = new PrismaClient();
 

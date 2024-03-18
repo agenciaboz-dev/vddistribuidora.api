@@ -1,6 +1,6 @@
 import { Prisma } from "@prisma/client";
 import { Socket } from "socket.io";
-import { WithoutFunctions } from "./helpers";
+import { WithoutFunctions } from "../helpers";
 
 export type ProductReceiptPrisma = Prisma.ProductReceiptGetPayload<{}>;
 
