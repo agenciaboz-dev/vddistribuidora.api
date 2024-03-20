@@ -92,6 +92,7 @@ export const handleSocket = (socket: Socket) => {
   socket.on("productStock:find", (id: number) => {
     ProductStock.find(socket, id);
   });
+  socket.on("productStock:list", () => ProductStock.list(socket));
 };
 
 export default { initializeIoServer, getIoInstance, handleSocket };
