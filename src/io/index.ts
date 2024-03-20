@@ -84,6 +84,16 @@ export const handleSocket = (socket: Socket) => {
     StockLocation.create(socket, data);
   });
 
+  socket.on("stockLocation:find", (id: number) => {
+    StockLocation.find(socket, id);
+  });
+
+  socket.on("stockLocation:list", () => StockLocation.list(socket));
+
+  socket.on("stockLocation:delete", (id: number) => {
+    StockLocation.delete(socket, id);
+  });
+
   // PRODUCTSTOCK OPRTATIONS
   socket.on("productStock:create", (data: ProductStockForm) => {
     ProductStock.create(socket, data);
@@ -93,6 +103,10 @@ export const handleSocket = (socket: Socket) => {
     ProductStock.find(socket, id);
   });
   socket.on("productStock:list", () => ProductStock.list(socket));
+
+  socket.on("productStock:delete", (id: number) => {
+    ProductStock.delete(socket, id);
+  });
 };
 
 export default { initializeIoServer, getIoInstance, handleSocket };

@@ -60,6 +60,46 @@ export class StockLocation {
     }
   }
 
+  static async list(socket: Socket) {
+    const stockLocations = await prisma.stockLocation.findMany({
+      include: include,
+    });
+    socket.emit("stockLocation:list:success", stockLocations);
+  }
+
+  static async find(socket: Socket, id: number) {
+    try {
+      const stockLocationPrisma = await prisma.stockLocation.findUnique({
+        where: { id },
+        include: include,
+      });
+      if (stockLocationPrisma) {
+        const stockLocation = new StockLocation(stockLocationPrisma);
+        stockLocation.load(stockLocationPrisma);
+        socket.emit("stockLocation:creation:success", stockLocation);
+      } else {
+        throw `cadastro de ID:${id} não encontrado`;
+      }
+    } catch (error) {
+      socket.emit("stockLocation:find:failure", error);
+    }
+  }
+
+  static async delete(socket: Socket, id: number) {
+    try {
+      const stockLocationPrisma = await prisma.stockLocation.delete({
+        where: { id },
+        include: include,
+      });
+      socket.emit("stockLocation:creation:success", stockLocationPrisma);
+    } catch (error) {
+      socket.emit(
+        "stockLocation:find:failure",
+        `cadastro de ID:${id} não encontrado`
+      );
+    }
+  }
+
   load(data: StockLocationPrisma) {
     this.id = data.id;
     this.name = data.name;

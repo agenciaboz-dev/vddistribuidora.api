@@ -119,6 +119,18 @@ export class ProductStock {
     socket.emit("productStock:list:success", productStocks);
   }
 
+  static async delete(socket: Socket, id: number) {
+    try {
+      const productStockPrisma = await prisma.productStock.delete({
+        where: { id },
+        include: include,
+      });
+      socket.emit("productStock:delete:success", productStockPrisma);
+    } catch (error) {
+      socket.emit("productStock:delete:failure", error);
+    }
+  }
+
   load(data: ProductStockPrisma) {
     this.id = data.id;
     this.units = data.units;
