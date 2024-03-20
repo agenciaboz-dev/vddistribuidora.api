@@ -16,8 +16,8 @@ export const stockLocation = Prisma.validator<Prisma.StockLocationInclude>()({
 });
 
 export const productStock = Prisma.validator<Prisma.ProductStockInclude>()({
-  stockLocation: { include: stockLocation },
-  product: { include: { productStock: true } },
-});
+    stockLocation: { include: stockLocation },
+    product: { include: product },
+})
 
 // export const packaging = Prisma.validator<Prisma.PackagingInclude>()({});
