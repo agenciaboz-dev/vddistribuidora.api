@@ -23,6 +23,7 @@ export class ProductStock {
   baseCostValue: string;
   estimatedCost: string;
   suggestedCost: string;
+  status: boolean;
 
   stockLocation: StockLocation;
   stockLocationId: number;
@@ -107,6 +108,36 @@ export class ProductStock {
       socket.emit("productStock:update:success", productStock);
     } catch (error) {
       socket.emit("productStock:update:failure", error);
+      console.error(error);
+    }
+  }
+
+  static async toggle(socket: Socket, id: number) {
+    try {
+      // First, retrieve the current state of the product stock
+      const currentProductStock = await prisma.productStock.findUnique({
+        where: { id },
+        select: { status: true }, // Select only the status field
+      });
+
+      if (!currentProductStock) {
+        throw new Error(`ProductStock with ID ${id} not found.`);
+      }
+
+      // Toggle the status
+      const toggledStatus = !currentProductStock.status;
+
+      // Update the product stock with the new status
+      const updatedProductStock = await prisma.productStock.update({
+        where: { id },
+        data: { status: toggledStatus },
+        include: include, // Assuming you want to include related data in the response
+      });
+
+      const productStock = new ProductStock(updatedProductStock);
+      socket.emit("productStock:toggle:success", productStock);
+    } catch (error) {
+      socket.emit("productStock:toggle:failure", error);
       console.error(error);
     }
   }

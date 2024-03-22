@@ -99,6 +99,7 @@ model ProductStock {
 	baseCostValue String 
 	estimatedCost String 
 	suggestedCost String 
+	status Boolean @default(true)
 	productId Int 
 	product Product @relation(name: "ProductToProductStock", fields: [productId], references: [id], onDelete: Cascade)
 	stockLocationId Int 

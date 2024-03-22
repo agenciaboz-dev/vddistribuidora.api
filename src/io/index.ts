@@ -107,6 +107,10 @@ export const handleSocket = (socket: Socket) => {
     ProductStock.update(socket, data);
   });
 
+  socket.on("productStock:toggle", (id: number) => {
+    ProductStock.toggle(socket, id);
+  });
+
   socket.on("productStock:find", (id: number) => {
     ProductStock.find(socket, id);
   });
