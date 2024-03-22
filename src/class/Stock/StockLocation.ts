@@ -60,6 +60,32 @@ export class StockLocation {
     }
   }
 
+  static async update(socket: Socket, data: StockLocationForm) {
+    try {
+      const { ...updateData } = data;
+
+      const productLocationPrisma = await prisma.stockLocation.update({
+        where: { id: data.id },
+        data: {
+          ...updateData,
+          productStock: {
+            connect: data.productStock?.map((productStock) => ({
+              id: productStock.id,
+            })),
+          },
+        },
+        include: include,
+      });
+      const stockLocation = new StockLocation(productLocationPrisma);
+      stockLocation.load(productLocationPrisma);
+      socket.emit("stockLocation:update:success", stockLocation);
+    } catch (error) {
+      socket.emit("stockLocation:update:failure", error);
+      console.error(error);
+      throw error;
+    }
+  }
+
   static async list(socket: Socket) {
     const stockLocations = await prisma.stockLocation.findMany({
       include: include,
@@ -91,7 +117,7 @@ export class StockLocation {
         where: { id },
         include: include,
       });
-      socket.emit("stockLocation:creation:success", stockLocationPrisma);
+      socket.emit("stockLocation:deletion:success", stockLocationPrisma);
     } catch (error) {
       socket.emit(
         "stockLocation:find:failure",

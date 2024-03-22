@@ -84,6 +84,10 @@ export const handleSocket = (socket: Socket) => {
     StockLocation.create(socket, data);
   });
 
+  socket.on("stockLocation:update", (data: StockLocationForm) => {
+    StockLocation.update(socket, data);
+  });
+
   socket.on("stockLocation:find", (id: number) => {
     StockLocation.find(socket, id);
   });
@@ -97,6 +101,10 @@ export const handleSocket = (socket: Socket) => {
   // PRODUCTSTOCK OPRTATIONS
   socket.on("productStock:create", (data: ProductStockForm) => {
     ProductStock.create(socket, data);
+  });
+
+  socket.on("productStock:update", (data: ProductStockForm) => {
+    ProductStock.update(socket, data);
   });
 
   socket.on("productStock:find", (id: number) => {

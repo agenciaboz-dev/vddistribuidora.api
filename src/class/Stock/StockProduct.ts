@@ -86,6 +86,31 @@ export class ProductStock {
     }
   }
 
+  static async update(socket: Socket, data: ProductStockForm) {
+    try {
+      const { stockLocationId, productId, id, ...rest } = data;
+
+      const productStockPrisma = await prisma.productStock.update({
+        where: { id },
+        data: {
+          ...rest,
+          stockLocation: stockLocationId
+            ? { connect: { id: stockLocationId } }
+            : undefined,
+          product: productId ? { connect: { id: productId } } : undefined,
+        },
+        include: include,
+      });
+
+      const productStock = new ProductStock(productStockPrisma);
+      productStock.load(productStockPrisma);
+      socket.emit("productStock:update:success", productStock);
+    } catch (error) {
+      socket.emit("productStock:update:failure", error);
+      console.error(error);
+    }
+  }
+
   static async find(socket: Socket, id: number) {
     try {
       const productStockPrisma = await prisma.productStock.findUnique({
@@ -152,6 +177,18 @@ export class ProductStock {
 
 export type ProductStockForm = Omit<WithoutFunctions<ProductStock>, "id"> & {
   id?: number;
-  stockLocationId: number;
-  productId: number;
+  stockLocationId?: number;
+  productId?: number;
+
+  units: string;
+  weightCcm3: string;
+  massGrams: string;
+  volumeCm3: string;
+  productionToleranceType: string;
+  percentageProductTolerance: string;
+  stockConfig: string;
+  minQuantity: string;
+  baseCostValue: string;
+  estimatedCost: string;
+  suggestedCost: string;
 };
