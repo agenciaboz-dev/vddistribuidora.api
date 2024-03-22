@@ -76,27 +76,27 @@ export class Product {
     }
   }
 
-  static async update(socket: Socket, data: ProductForm) {
-    try {
-      const { id, ...rest } = data;
-      const productPrisma = await prisma.product.update({
-        where: { id },
-        data: {
-          ...rest,
-          productStock: {
-            update: data.productStock || [],
-          },
-        },
-        include: include,
-      });
-      const product = new Product(productPrisma);
-      product.load(productPrisma);
-      socket.emit("product:update:success", product);
-    } catch (error) {
-      socket.emit("product:update:failure", error);
-      console.error(error);
-    }
-  }
+  //   static async update(socket: Socket, data: ProductForm) {
+  //     try {
+  //       const { productStockId, ...rest } = data;
+  //       const productPrisma = await prisma.product.update({
+  //         where: { id },
+  //         data: {
+  //           ...rest,
+  //           productStock: {
+  //             update: data.productStock || [],
+  //           },
+  //         },
+  //         include: include,
+  //       });
+  //       const product = new Product(productPrisma);
+  //       product.load(productPrisma);
+  //       socket.emit("product:update:success", product);
+  //     } catch (error) {
+  //       socket.emit("product:update:failure", error);
+  //       console.error(error);
+  //     }
+  //   }
 
   static async delete(socket: Socket, id: number) {
     try {
