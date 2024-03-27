@@ -134,24 +134,18 @@ model Product {
 	grossWeight String? 
 	mass String? 
 	volume String? 
-	receipt ProductReceipt[] @relation(name: "ProductToProductReceipt")
-}
-model ProductReceipt {
-	id Int @id @default(autoincrement())
-	number String 
-	productCode String 
-	receiptDescription String 
-	cfop String 
-	ncm String 
-	commercialUnit String 
-	tributaryUnit String 
-	commercialQuantity String 
-	tributaryQuantity String 
-	commercialUnitValue String 
-	tributaryUnitValue String 
-	grossValue String 
-	icmsOrigin String 
-	additionalInfo String 
-	productId Int 
-	product Product @relation(name: "ProductToProductReceipt", fields: [productId], references: [id], onDelete: Cascade)
+	number String? 
+	productCode String? 
+	receiptDescription String? 
+	cfop String? 
+	ncm String? 
+	commercialUnit String? 
+	tributaryUnit String? 
+	commercialQuantity String? 
+	tributaryQuantity String? 
+	commercialUnitValue String? 
+	tributaryUnitValue String? 
+	grossValue String? 
+	icmsOrigin String? 
+	additionalInfo String? 
 }

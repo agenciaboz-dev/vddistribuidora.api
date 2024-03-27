@@ -10,7 +10,6 @@ const prisma = new PrismaClient();
 export type ProductPrisma = Prisma.ProductGetPayload<{
   include: typeof include;
 }>;
-export type ProductReceiptPrisma = Prisma.ProductReceiptGetPayload<{}>;
 
 export class Product {
   id?: number; // Made optional to handle before creation
@@ -30,8 +29,21 @@ export class Product {
   grossWeight: string | null;
   mass: string | null;
   volume: string | null;
+  number: string | null;
+  productCode: string | null;
+  receiptDescription: string | null;
+  cfop: string | null;
+  ncm: string | null;
+  commercialUnit: string | null;
+  tributaryUnit: string | null;
+  commercialQuantity: string | null;
+  tributaryQuantity: string | null;
+  commercialUnitValue: string | null;
+  tributaryUnitValue: string | null;
+  grossValue: string | null;
+  icmsOrigin: string | null;
+  additionalInfo: string | null;
 
-  receipt?: ProductReceipt[];
   productStock?: ProductStock[];
 
   constructor(data: ProductPrisma) {
@@ -56,9 +68,6 @@ export class Product {
       const productPrisma = await prisma.product.create({
         data: {
           ...data,
-          receipt: {
-            create: data.receipt || [],
-          },
           productStock: {
             create: data.productStock || [],
           },
@@ -155,8 +164,20 @@ export class Product {
     this.grossWeight = data.grossWeight;
     this.mass = data.mass;
     this.volume = data.volume;
-
-    this.receipt = data.receipt.map((item) => new ProductReceipt(item));
+    this.number = data.number;
+    this.productCode = data.productCode;
+    this.receiptDescription = data.receiptDescription;
+    this.cfop = data.cfop;
+    this.ncm = data.ncm;
+    this.commercialUnit = data.commercialUnit;
+    this.tributaryUnit = data.tributaryUnit;
+    this.commercialQuantity = data.commercialQuantity;
+    this.tributaryQuantity = data.tributaryQuantity;
+    this.commercialUnitValue = data.commercialUnitValue;
+    this.tributaryUnitValue = data.tributaryUnitValue;
+    this.grossValue = data.grossValue;
+    this.icmsOrigin = data.icmsOrigin;
+    this.additionalInfo = data.additionalInfo;
 
     return this;
   }
@@ -187,4 +208,18 @@ export type ProductForm = Omit<
   grossWeight: string;
   mass: string;
   volume: string;
+  number: string;
+  productCode: string;
+  receiptDescription: string;
+  cfop: string;
+  ncm: string;
+  commercialUnit: string;
+  tributaryUnit: string;
+  commercialQuantity: string;
+  tributaryQuantity: string;
+  commercialUnitValue: string;
+  tributaryUnitValue: string;
+  grossValue: string;
+  icmsOrigin: string;
+  additionalInfo: string;
 };
